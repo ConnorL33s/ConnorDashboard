@@ -1,0 +1,1331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Connor Dashboard">
+<meta name="theme-color" content="#000000">
+<title>Connor Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:       #000000;
+    --bg2:      #0a0a0a;
+    --bg3:      #111111;
+    --border:   #1a1a1a;
+    --border2:  #2a2a2a;
+    --text:     #f0f0f0;
+    --muted:    #555555;
+    --dim:      #333333;
+    --cyan:     #39ff14;
+    --cyan2:    #28b80e;
+    --purple:   #39ff14;
+    --amber:    #c8ff00;
+    --green:    #39ff14;
+    --green2:   #28b80e;
+    --red:      #ff3333;
+    --safe:     font-family:'Barlow',sans-serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+  html, body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Barlow', sans-serif;
+    min-height: 100vh;
+    min-height: -webkit-fill-available;
+    overscroll-behavior: none;
+  }
+
+  /* ── HEADER ── */
+  .header {
+    position: sticky; top: 0; z-index: 100;
+    background: var(--bg2);
+    border-bottom: 1px solid var(--border);
+    padding: env(safe-area-inset-top, 0) 0 0;
+  }
+  .header-inner {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 16px;
+  }
+  .header-logo {
+    display: flex; align-items: center; gap: 10px;
+  }
+  .header-icon {
+    width: 36px; height: 36px;
+    background: linear-gradient(135deg, #0d2200, var(--cyan));
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+  }
+  .header-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900; font-size: 18px;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--text);
+  }
+  .header-sub {
+    font-size: 10px; color: var(--muted);
+    letter-spacing: 0.12em; text-transform: uppercase;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 600;
+  }
+  .header-stats {
+    text-align: right;
+  }
+  .header-lifts {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 13px; font-weight: 700;
+    color: var(--cyan); letter-spacing: 0.06em;
+  }
+  .header-weight {
+    font-size: 11px; color: var(--muted);
+  }
+
+  /* ── NAV ── */
+  .nav {
+    display: flex; overflow-x: auto;
+    border-top: 1px solid var(--border);
+    scrollbar-width: none;
+  }
+  .nav::-webkit-scrollbar { display: none; }
+  .nav-btn {
+    flex: 0 0 auto;
+    background: none; border: none; cursor: pointer;
+    padding: 10px 16px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 13px; font-weight: 700;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--muted);
+    border-bottom: 2px solid transparent;
+    transition: color 0.15s, border-color 0.15s;
+    white-space: nowrap;
+  }
+  .nav-btn.active { color: var(--cyan); border-bottom-color: var(--cyan); }
+
+  /* ── BODY ── */
+  .body { padding: 16px; padding-bottom: 40px; max-width: 900px; margin: 0 auto; }
+
+  /* ── CARDS ── */
+  .card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 12px;
+  }
+  .card-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 11px; font-weight: 800;
+    letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--muted); margin-bottom: 14px;
+  }
+
+  /* ── GRID ── */
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+  .grid4 { display: grid; grid-template-columns: repeat(4,1fr); gap: 8px; }
+
+  /* ── STAT TILES ── */
+  .stat-tile {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 12px;
+  }
+  .stat-label {
+    font-size: 10px; color: var(--muted);
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700; letter-spacing: 0.12em;
+    text-transform: uppercase; margin-bottom: 6px;
+  }
+  .stat-value {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 26px; font-weight: 900; line-height: 1;
+    margin-bottom: 4px;
+  }
+  .stat-sub { font-size: 11px; color: var(--muted); }
+
+  /* ── MACRO BARS ── */
+  .macro-row { margin-bottom: 12px; }
+  .macro-header {
+    display: flex; justify-content: space-between;
+    margin-bottom: 5px;
+  }
+  .macro-label {
+    font-size: 11px; color: var(--muted);
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+  }
+  .macro-val {
+    font-size: 12px; font-weight: 700; color: var(--text);
+  }
+  .macro-val.over { color: var(--red); }
+  .macro-track {
+    height: 6px; background: var(--bg3);
+    border-radius: 3px; overflow: hidden;
+  }
+  .macro-fill {
+    height: 100%; border-radius: 3px;
+    transition: width 0.4s ease;
+  }
+
+  /* ── WEEK STRIP ── */
+  .week-strip {
+    display: grid; grid-template-columns: repeat(7,1fr); gap: 6px;
+  }
+  .day-cell {
+    background: var(--bg3); border: 1px solid var(--border);
+    border-radius: 8px; padding: 10px 4px;
+    text-align: center;
+  }
+  .day-cell.today {
+    background: #0d2200; border-color: var(--cyan);
+  }
+  .day-name {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 12px; font-weight: 800; letter-spacing: 0.08em;
+    color: var(--muted); margin-bottom: 4px;
+  }
+  .day-cell.today .day-name { color: var(--cyan); }
+  .day-session {
+    font-size: 9px; color: var(--dim); line-height: 1.3;
+    margin-bottom: 6px;
+  }
+  .day-icon { font-size: 15px; }
+
+  /* ── LIFT BARS ── */
+  .lift-row { margin-bottom: 16px; }
+  .lift-header {
+    display: flex; justify-content: space-between;
+    align-items: center; margin-bottom: 4px;
+  }
+  .lift-name { font-size: 13px; font-weight: 600; color: var(--text); }
+  .lift-val { font-size: 14px; font-weight: 900; color: var(--green); font-family: 'Barlow Condensed', sans-serif; }
+  .lift-track { height: 5px; background: var(--bg3); border-radius: 3px; overflow: hidden; margin-bottom: 3px; }
+  .lift-fill {
+    height: 100%; border-radius: 3px;
+    background: linear-gradient(90deg, #0d2200, var(--green));
+    transition: width 0.4s ease;
+  }
+  .lift-meta { font-size: 10px; color: var(--dim); }
+
+  /* ── INPUTS ── */
+  input, select, textarea {
+    background: var(--bg3);
+    border: 1px solid var(--border2);
+    color: var(--text);
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-size: 15px;
+    font-family: 'Barlow', sans-serif;
+    width: 100%;
+    outline: none;
+    transition: border-color 0.15s;
+    appearance: none;
+  }
+  input:focus, select:focus { border-color: var(--cyan); }
+  input[type="date"] { color-scheme: dark; }
+  input[type="number"] { -moz-appearance: textfield; }
+  input[type="number"]::-webkit-outer-spin-button,
+  input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
+
+  /* ── BUTTONS ── */
+  .btn {
+    display: block; width: 100%;
+    border: none; border-radius: 8px;
+    padding: 12px 16px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 15px; font-weight: 800;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    cursor: pointer; transition: opacity 0.15s, transform 0.1s;
+  }
+  .btn:active { transform: scale(0.97); }
+  .btn-primary { background: var(--cyan); color: #000000; }
+  .btn-secondary { background: var(--bg3); color: var(--text); border: 1px solid var(--border2); }
+  .btn-success { background: var(--green); color: #000000; }
+  .btn-danger { background: none; color: var(--red); border: 1px solid #ff4d6a33; font-size: 13px; padding: 8px; }
+
+  /* ── FORM FIELD ── */
+  .field { margin-bottom: 12px; }
+  .field-label {
+    font-size: 10px; color: var(--muted);
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 800; letter-spacing: 0.14em;
+    text-transform: uppercase; margin-bottom: 5px;
+    display: block;
+  }
+
+  /* ── CHECK ITEMS ── */
+  .check-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 11px 13px; border-radius: 8px;
+    background: var(--bg3); border: 1px solid var(--border);
+    margin-bottom: 7px; cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+    user-select: none;
+  }
+  .check-item.done {
+    background: #012a00; border-color: var(--green2);
+  }
+  .check-box { font-size: 18px; flex-shrink: 0; }
+  .check-label { font-size: 13px; color: var(--muted); }
+  .check-item.done .check-label { color: var(--green); }
+
+  /* ── MEAL LOG ITEMS ── */
+  .meal-item {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 12px; background: var(--bg3);
+    border: 1px solid var(--border); border-radius: 8px;
+    margin-bottom: 6px;
+  }
+  .meal-food { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 2px; }
+  .meal-meta { font-size: 11px; color: var(--muted); }
+  .meal-del {
+    background: none; border: none; color: var(--red);
+    font-size: 20px; cursor: pointer; padding: 4px 8px;
+    flex-shrink: 0;
+  }
+
+  /* ── LIFT LOG ITEMS ── */
+  .lift-entry {
+    font-size: 12px; color: var(--muted);
+    padding: 5px 0; border-bottom: 1px solid var(--border);
+  }
+  .lift-entry:last-child { border-bottom: none; }
+
+  /* ── WEIGHT LOG ── */
+  .weight-row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 10px 12px; background: var(--bg3);
+    border: 1px solid var(--border); border-radius: 8px;
+    margin-bottom: 6px;
+  }
+  .weight-date { font-size: 13px; color: var(--muted); }
+  .weight-kg { font-size: 17px; font-weight: 900; color: var(--text); font-family: 'Barlow Condensed', sans-serif; }
+  .weight-change { font-size: 12px; font-weight: 700; }
+
+  /* ── TAGS ── */
+  .tag {
+    display: inline-block;
+    padding: 2px 8px; border-radius: 4px;
+    font-size: 10px; font-weight: 800;
+    font-family: 'Barlow Condensed', sans-serif;
+    letter-spacing: 0.08em; text-transform: uppercase;
+  }
+  .tag-blue { background: #0d2200; color: var(--cyan); }
+  .tag-green { background: #012a00; color: var(--green); }
+  .tag-amber { background: #1a1a00; color: var(--amber); }
+  .tag-red { background: #1a0000; color: var(--red); }
+
+  /* ── PLAN MEAL ── */
+  .plan-meal {
+    padding: 10px 12px; background: var(--bg3);
+    border: 1px solid var(--border); border-radius: 8px;
+    margin-bottom: 7px;
+  }
+  .plan-meal-header {
+    display: flex; justify-content: space-between;
+    align-items: center; margin-bottom: 5px;
+  }
+  .plan-time { font-size: 12px; font-weight: 700; color: var(--cyan); font-family: 'Barlow Condensed', sans-serif; }
+  .plan-name { font-size: 12px; color: var(--muted); }
+  .plan-foods { font-size: 11px; color: var(--dim); }
+  .btn-add-all {
+    background: #0d2200; color: var(--cyan);
+    border: 1px solid var(--cyan); border-radius: 6px;
+    padding: 4px 10px; font-size: 11px; font-weight: 800;
+    font-family: 'Barlow Condensed', sans-serif;
+    letter-spacing: 0.06em; cursor: pointer;
+    flex-shrink: 0;
+  }
+
+  /* ── SECTION DIVIDER ── */
+  .section-gap { height: 8px; }
+
+  /* ── EXPORT/IMPORT ── */
+  .io-row { display: flex; gap: 8px; }
+  .io-row .btn { flex: 1; }
+
+  /* ── SCROLLABLE ── */
+  .scroll-list { max-height: 380px; overflow-y: auto; }
+
+  /* ── MOBILE OPTIMISATIONS ── */
+  @media (max-width: 480px) {
+    .grid4 { grid-template-columns: repeat(2,1fr); }
+    .stat-value { font-size: 22px; }
+    .week-strip { gap: 4px; }
+    .day-session { display: none; }
+  }
+
+  /* ── NO DATA MESSAGE ── */
+  .empty {
+    text-align: center; padding: 24px 0;
+    color: var(--muted); font-size: 13px;
+  }
+
+  /* ── ALERT BANNER ── */
+  .alert {
+    padding: 10px 14px; border-radius: 8px;
+    font-size: 12px; margin-bottom: 10px;
+    border-left: 3px solid;
+  }
+  .alert-amber { background: #1a1a00; border-color: var(--amber); color: var(--amber); }
+  .alert-green { background: #001a00; border-color: var(--green); color: var(--green); }
+  .alert-red   { background: #1a0000; border-color: var(--red);   color: var(--red);   }
+
+  /* ── MACROS SUMMARY ROW ── */
+  .macro-summary {
+    display: grid; grid-template-columns: repeat(4,1fr); gap: 6px;
+    margin-top: 14px;
+  }
+  .macro-tile {
+    background: var(--bg3); border-radius: 8px;
+    padding: 10px 6px; text-align: center;
+  }
+  .macro-tile-val {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 20px; font-weight: 900;
+    margin-bottom: 2px;
+  }
+  .macro-tile-val.over { color: var(--red) !important; }
+  .macro-tile-label { font-size: 10px; color: var(--muted); }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-inner">
+    <div class="header-logo">
+      <div class="header-icon">🏉</div>
+      <div>
+        <div class="header-title">Connor</div>
+        <div class="header-sub">Dashboard</div>
+      </div>
+    </div>
+    <div class="header-stats">
+      <div class="header-lifts" id="hdr-lifts">S170 / B110 / D180</div>
+      <div class="header-weight" id="hdr-weight">122kg · Block 1</div>
+    </div>
+  </div>
+  <nav class="nav">
+    <button class="nav-btn active" onclick="showTab('dashboard')">⚡ Dashboard</button>
+    <button class="nav-btn" onclick="showTab('meals')">🍗 Log Meals</button>
+    <button class="nav-btn" onclick="showTab('lifts')">🏋️ Lifts</button>
+    <button class="nav-btn" onclick="showTab('weight')">⚖️ Weight</button>
+    <button class="nav-btn" onclick="showTab('checklist')">✅ Checklist</button>
+    <button class="nav-btn" onclick="showTab('data')">💾 Data</button>
+  </nav>
+</div>
+
+<div class="body" id="app-body"></div>
+
+<script>
+'use strict';
+
+// ─── CONSTANTS ───────────────────────────────────────────────────────────────
+
+const WEEKLY = [
+  { day:'Mon', session:'Upper Push',    type:'gym' },
+  { day:'Tue', session:'Lower Squat',   type:'gym' },
+  { day:'Wed', session:'Rest/Tempo',    type:'rest' },
+  { day:'Thu', session:'Upper Pull',    type:'gym' },
+  { day:'Fri', session:'Lower Hinge',   type:'gym' },
+  { day:'Sat', session:'Sprints',       type:'conditioning' },
+  { day:'Sun', session:'Batch Cook',    type:'rest' },
+];
+
+const TARGETS = {
+  training: { kcal:3500, protein:255, carbs:400, fat:100 },
+  rest:      { kcal:3100, protein:245, carbs:325, fat:95  },
+};
+
+const LIFT_GOALS = [
+  { name:'Back Squat',       start:170, target:190 },
+  { name:'Deadlift',         start:180, target:202 },
+  { name:'Bench Press',      start:110, target:122 },
+  { name:'Weighted Pull-Up', start:20,  target:32  },
+];
+
+const FOODS = {
+  'Oats 150g':                    {kcal:540,protein:18,carbs:88,fat:10},
+  'Whey protein 1 scoop':         {kcal:110,protein:24,carbs:4, fat:2 },
+  'Whey protein 2 scoops':        {kcal:220,protein:48,carbs:8, fat:4 },
+  'Semi-skimmed milk 250ml':      {kcal:120,protein:9, carbs:12,fat:4 },
+  'Semi-skimmed milk 400ml':      {kcal:192,protein:14,carbs:19,fat:6 },
+  'Whole milk 200ml':             {kcal:130,protein:7, carbs:10,fat:7 },
+  'Banana':                       {kcal:90, protein:1, carbs:23,fat:0 },
+  'Orange':                       {kcal:60, protein:1, carbs:15,fat:0 },
+  'Chicken breast 200g':          {kcal:220,protein:46,carbs:0, fat:5 },
+  'Chicken breast 150g':          {kcal:165,protein:34,carbs:0, fat:4 },
+  'Chicken thighs 200g':          {kcal:280,protein:38,carbs:0, fat:14},
+  'White rice cooked 400g':       {kcal:520,protein:10,carbs:115,fat:1},
+  'White rice cooked 250g':       {kcal:325,protein:6, carbs:72,fat:1 },
+  'White pasta cooked 300g':      {kcal:330,protein:12,carbs:66,fat:2 },
+  'Batch chicken pasta 1 portion':{kcal:700,protein:52,carbs:78,fat:10},
+  'Greek yoghurt 0% 200g':        {kcal:110,protein:20,carbs:8, fat:0 },
+  'Greek yoghurt 0% 300g':        {kcal:165,protein:30,carbs:12,fat:0 },
+  'Frozen berries 80g':           {kcal:40, protein:1, carbs:10,fat:0 },
+  'Frozen mango 80g':             {kcal:50, protein:1, carbs:13,fat:0 },
+  'Mixed nuts 30g':               {kcal:185,protein:6, carbs:5, fat:16},
+  'Rice cakes x4':                {kcal:100,protein:2, carbs:22,fat:0 },
+  'Peanut butter 15g':            {kcal:90, protein:3, carbs:3, fat:8 },
+  'Beef jerky 50g':               {kcal:165,protein:24,carbs:4, fat:6 },
+  'Beef mince 5% 150g':           {kcal:200,protein:39,carbs:0, fat:8 },
+  'Tuna tin 160g':                {kcal:130,protein:30,carbs:0, fat:2 },
+  'Salmon fillet 200g':           {kcal:260,protein:46,carbs:0, fat:12},
+  'Sardines tin':                 {kcal:190,protein:24,carbs:0, fat:12},
+  'Cottage cheese 300g':          {kcal:330,protein:33,carbs:10,fat:12},
+  'Casein 1 scoop':               {kcal:120,protein:24,carbs:4, fat:2 },
+  'Oats 30g smoothie':            {kcal:108,protein:4, carbs:18,fat:2 },
+  'Olive oil 1 tbsp':             {kcal:120,protein:0, carbs:0, fat:14},
+  'Soy sauce 1 tbsp':             {kcal:10, protein:1, carbs:1, fat:0 },
+  'Tomato sauce 100g':            {kcal:40, protein:2, carbs:8, fat:1 },
+  'Gousto meal':                  {kcal:600,protein:40,carbs:55,fat:18},
+  'White potato 200g':            {kcal:170,protein:4, carbs:40,fat:0 },
+  'Granola 40g':                  {kcal:180,protein:4, carbs:28,fat:6 },
+  'Sweetcorn 80g':                {kcal:70, protein:2, carbs:15,fat:1 },
+  'Light mayo 1 tbsp':            {kcal:35, protein:0, carbs:1, fat:3 },
+  'Noodles straight-to-wok 150g': {kcal:190,protein:5, carbs:38,fat:2 },
+  'Creatine 5g':                  {kcal:0,  protein:0, carbs:0, fat:0 },
+  'Electrolytes sachet':          {kcal:10, protein:0, carbs:2, fat:0 },
+};
+
+const PLAN_MEALS = {
+  training:[
+    {time:'07:00',label:'Breakfast',    foods:['Oats 150g','Whey protein 1 scoop','Semi-skimmed milk 250ml','Banana']},
+    {time:'10:00',label:'Snack 1',      foods:['Greek yoghurt 0% 200g','Frozen berries 80g','Mixed nuts 30g']},
+    {time:'12:30',label:'Lunch',        foods:['Batch chicken pasta 1 portion','Olive oil 1 tbsp']},
+    {time:'15:00',label:'Snack 2',      foods:['Rice cakes x4','Peanut butter 15g','Orange']},
+    {time:'17:30',label:'Pre-Training', foods:['White rice cooked 400g','Chicken breast 200g','Soy sauce 1 tbsp']},
+    {time:'20:30',label:'Post-Training',foods:['Whey protein 2 scoops','Semi-skimmed milk 400ml','Oats 30g smoothie','Frozen berries 80g']},
+    {time:'21:00',label:'Gousto',       foods:['Gousto meal']},
+    {time:'22:00',label:'Pre-Bed',      foods:['Casein 1 scoop','Semi-skimmed milk 250ml']},
+  ],
+  rest:[
+    {time:'07:00',label:'Breakfast',foods:['Oats 150g','Whey protein 1 scoop','Semi-skimmed milk 250ml']},
+    {time:'10:00',label:'Snack 1',  foods:['Greek yoghurt 0% 200g','Mixed nuts 30g']},
+    {time:'12:30',label:'Lunch',    foods:['White rice cooked 250g','Chicken breast 150g','Olive oil 1 tbsp']},
+    {time:'15:00',label:'Snack 2',  foods:['Beef jerky 50g','Whole milk 200ml']},
+    {time:'18:00',label:'Dinner',   foods:['Beef mince 5% 150g','White rice cooked 250g','Tomato sauce 100g']},
+    {time:'22:00',label:'Pre-Bed',  foods:['Casein 1 scoop','Semi-skimmed milk 250ml']},
+  ],
+};
+
+const ALL_LIFTS = [
+  'Back Squat','Deadlift','Bench Press','Weighted Pull-Up',
+  'Trap Bar Deadlift','Romanian Deadlift','Hip Thrust',
+  'Incline DB Press','Barbell Row','Seated Cable Row',
+  'Shoulder Press','Copenhagen Plank','Neck Extension',
+];
+
+const DAILY_CHECKS = [
+  {key:'creatine',  label:'Creatine 5g with breakfast'},
+  {key:'vitd',      label:'Vitamin D3 with breakfast'},
+  {key:'water',     label:'500ml water on waking'},
+  {key:'prebed',    label:'Pre-bed protein (casein)'},
+  {key:'sleep',     label:'Lights out by 22:30'},
+  {key:'magnesium', label:'Magnesium glycinate pre-bed'},
+];
+const TRAIN_CHECKS = [
+  {key:'pretrain',  label:'Pre-training meal by 5:50pm'},
+  {key:'session',   label:'Session completed'},
+  {key:'neck',      label:'Neck work done in session'},
+  {key:'postshake', label:'Post-training smoothie'},
+  {key:'bagpacked', label:'Gym bag packed for tomorrow'},
+  {key:'prepnext',  label:"Tomorrow's food prepped"},
+];
+const SUNDAY_CHECKS = [
+  {key:'batch_chick',  label:'Chicken cooked & portioned (1.6–1.8kg)'},
+  {key:'batch_rice',   label:'Rice cooked & portioned (5 containers)'},
+  {key:'batch_pasta',  label:'Pasta batch made (4 lunch containers)'},
+  {key:'yoghurt_pots', label:'5× yoghurt + berry pots ready'},
+  {key:'nut_bags',     label:'5× nut bags (30g each)'},
+  {key:'shakers',      label:'5× protein shakers filled'},
+  {key:'weigh',        label:'Weekly weight logged'},
+  {key:'self_check',   label:'Weekly self-check completed'},
+];
+
+// ─── STATE ───────────────────────────────────────────────────────────────────
+
+let state = {
+  logs:  {},   // keyed by YYYY-MM-DD
+  lifts: {},   // { liftName: { current, history:[{date,kg,reps,rpe}] } }
+};
+
+function load() {
+  try {
+    const raw = localStorage.getItem('prop_tracker_v2');
+    if (raw) state = JSON.parse(raw);
+  } catch(e) {}
+  // Ensure structure
+  if (!state.logs)  state.logs  = {};
+  if (!state.lifts) state.lifts = {};
+}
+function save() {
+  try { localStorage.setItem('prop_tracker_v2', JSON.stringify(state)); } catch(e) {}
+  updateHeader();
+}
+
+// ─── DATE HELPERS ─────────────────────────────────────────────────────────────
+
+function today()    { return new Date().toISOString().split('T')[0]; }
+function todayDow() { return new Date().getDay(); } // 0=Sun
+function dowIndex() {
+  // 0=Sun→6, 1=Mon→0, 2=Tue→1, 3=Wed→2, 4=Thu→3, 5=Fri→4, 6=Sat→5
+  const dow = new Date().getDay();
+  return dow === 0 ? 6 : dow - 1;
+}
+function dateDow(dateStr) {
+  const d = new Date(dateStr + 'T12:00:00');
+  const dow = d.getDay();
+  return dow === 0 ? 6 : dow - 1;
+}
+function getDayType(idx) {
+  return (WEEKLY[idx].type === 'gym' || WEEKLY[idx].type === 'conditioning') ? 'training' : 'rest';
+}
+function dayLog(date) {
+  if (!state.logs[date]) state.logs[date] = { meals:[], checks:{} };
+  if (!state.logs[date].meals)  state.logs[date].meals  = [];
+  if (!state.logs[date].checks) state.logs[date].checks = {};
+  return state.logs[date];
+}
+
+// ─── MACRO CALC ───────────────────────────────────────────────────────────────
+
+function sumMeals(meals) {
+  return meals.reduce((a, m) => ({
+    kcal:    a.kcal    + (m.kcal    || 0),
+    protein: a.protein + (m.protein || 0),
+    carbs:   a.carbs   + (m.carbs   || 0),
+    fat:     a.fat     + (m.fat     || 0),
+  }), {kcal:0,protein:0,carbs:0,fat:0});
+}
+
+function foodMacros(foodName, qty=100) {
+  const f = FOODS[foodName];
+  if (!f) return {kcal:0,protein:0,carbs:0,fat:0};
+  const m = qty / 100;
+  return {
+    kcal:    Math.round(f.kcal    * m),
+    protein: Math.round(f.protein * m),
+    carbs:   Math.round(f.carbs   * m),
+    fat:     Math.round(f.fat     * m),
+  };
+}
+
+// ─── HEADER UPDATE ────────────────────────────────────────────────────────────
+
+function updateHeader() {
+  // Best lifts
+  const sq  = (state.lifts['Back Squat']   && state.lifts['Back Squat'].current)   || 170;
+  const bp  = (state.lifts['Bench Press']  && state.lifts['Bench Press'].current)  || 110;
+  const dl  = (state.lifts['Deadlift']     && state.lifts['Deadlift'].current)     || 180;
+  document.getElementById('hdr-lifts').textContent = `S${sq} / B${bp} / D${dl}`;
+
+  // Latest weight
+  const weights = Object.entries(state.logs)
+    .filter(([,v]) => v.weight)
+    .sort(([a],[b]) => a.localeCompare(b));
+  const w = weights.length > 0 ? weights[weights.length-1][1].weight : 122;
+  document.getElementById('hdr-weight').textContent = `${w}kg · Block 1`;
+}
+
+// ─── TAB ROUTING ─────────────────────────────────────────────────────────────
+
+let currentTab = 'dashboard';
+
+function showTab(tab) {
+  currentTab = tab;
+  document.querySelectorAll('.nav-btn').forEach((b,i) => {
+    b.classList.toggle('active', b.textContent.toLowerCase().includes(tab) || (tab==='dashboard' && i===0));
+  });
+  render();
+}
+
+function render() {
+  const el = document.getElementById('app-body');
+  switch(currentTab) {
+    case 'dashboard': el.innerHTML = renderDashboard(); break;
+    case 'meals':     el.innerHTML = renderMeals();     break;
+    case 'lifts':     el.innerHTML = renderLifts();     break;
+    case 'weight':    el.innerHTML = renderWeight();    break;
+    case 'checklist': el.innerHTML = renderChecklist(); break;
+    case 'data':      el.innerHTML = renderData();      break;
+  }
+  bindEvents();
+}
+
+// ─── DASHBOARD ────────────────────────────────────────────────────────────────
+
+function renderDashboard() {
+  const di     = dowIndex();
+  const info   = WEEKLY[di];
+  const dtype  = getDayType(di);
+  const tgts   = TARGETS[dtype];
+  const dl     = dayLog(today());
+  const totals = sumMeals(dl.meals || []);
+
+  // Weight change
+  const wEntries = Object.entries(state.logs)
+    .filter(([,v]) => v.weight)
+    .sort(([a],[b]) => a.localeCompare(b));
+  const curW   = wEntries.length > 0 ? wEntries[wEntries.length-1][1].weight : 122;
+  const wDiff  = wEntries.length > 0 ? (curW - 122).toFixed(1) : '—';
+  const wSign  = parseFloat(wDiff) > 0 ? '+' : '';
+
+  // Streak
+  let streak = 0;
+  const now = new Date(); now.setHours(0,0,0,0);
+  for (let i=0; i<60; i++) {
+    const d = new Date(now); d.setDate(d.getDate()-i);
+    const k = d.toISOString().split('T')[0];
+    const l = state.logs[k];
+    if (l && l.checks && l.checks.session) streak++;
+    else if (i > 0) break;
+  }
+
+  // Week strip
+  const weekStrip = WEEKLY.map((w, wi) => {
+    const offset = wi - di;
+    const d = new Date(now); d.setDate(d.getDate() + offset);
+    const k = d.toISOString().split('T')[0];
+    const done = state.logs[k]?.checks?.session;
+    const isToday = wi === di;
+    const icon = done ? '✅' : w.type === 'rest' ? '😴' : '⬜';
+    return `<div class="day-cell ${isToday?'today':''}">
+      <div class="day-name">${w.day}</div>
+      <div class="day-session">${w.session}</div>
+      <div class="day-icon">${icon}</div>
+    </div>`;
+  }).join('');
+
+  // Macro bars
+  const bars = [
+    {label:'Calories', v:totals.kcal,    t:tgts.kcal,    c:'#00d4ff'},
+    {label:'Protein',  v:totals.protein,  t:tgts.protein,  c:'#9b6dff'},
+    {label:'Carbs',    v:totals.carbs,    t:tgts.carbs,    c:'#ffb800'},
+    {label:'Fat',      v:totals.fat,      t:tgts.fat,      c:'#00e87a'},
+  ].map(({label,v,t,c}) => {
+    const pct = Math.min((v/t)*100, 100);
+    const over = v > t;
+    return `<div class="macro-row">
+      <div class="macro-header">
+        <span class="macro-label">${label}</span>
+        <span class="macro-val ${over?'over':''}">${v}<span style="color:var(--dim)">/${t}</span></span>
+      </div>
+      <div class="macro-track"><div class="macro-fill" style="width:${pct}%;background:${over?'var(--red)':c}"></div></div>
+    </div>`;
+  }).join('');
+
+  // Lift bars
+  const liftBars = LIFT_GOALS.map(({name,start,target}) => {
+    const cur = (state.lifts[name] && state.lifts[name].current) || start;
+    const pct = Math.min(Math.max(((cur-start)/(target-start))*100, 2), 100);
+    return `<div class="lift-row">
+      <div class="lift-header">
+        <span class="lift-name">${name}</span>
+        <span class="lift-val">${cur}kg</span>
+      </div>
+      <div class="lift-track"><div class="lift-fill" style="width:${pct}%"></div></div>
+      <div class="lift-meta">Target: ${target}kg</div>
+    </div>`;
+  }).join('');
+
+  // Alerts
+  let alerts = '';
+  if (totals.protein > 0 && totals.protein < tgts.protein * 0.6) {
+    alerts += `<div class="alert alert-amber">⚠️ Protein low today — aim for ${tgts.protein}g</div>`;
+  }
+  if (totals.kcal > tgts.kcal) {
+    alerts += `<div class="alert alert-red">📊 Over calorie target by ${totals.kcal - tgts.kcal}kcal</div>`;
+  }
+  if (streak >= 5) {
+    alerts += `<div class="alert alert-green">🔥 ${streak} day streak — check recovery markers</div>`;
+  }
+
+  return `
+  ${alerts}
+  <div class="grid4" style="margin-bottom:12px">
+    <div class="stat-tile">
+      <div class="stat-label">Today</div>
+      <div class="stat-value" style="color:var(--cyan);font-size:18px">${info.session}</div>
+      <div class="stat-sub">${dtype==='training'?'Training Day':'Rest Day'}</div>
+    </div>
+    <div class="stat-tile">
+      <div class="stat-label">Body Weight</div>
+      <div class="stat-value" style="color:var(--purple)">${curW}<span style="font-size:14px">kg</span></div>
+      <div class="stat-sub">${wSign}${wDiff}kg since start</div>
+    </div>
+    <div class="stat-tile">
+      <div class="stat-label">Session Streak</div>
+      <div class="stat-value" style="color:var(--amber)">${streak}</div>
+      <div class="stat-sub">days in a row</div>
+    </div>
+    <div class="stat-tile">
+      <div class="stat-label">Phase</div>
+      <div class="stat-value" style="color:var(--green);font-size:16px">Block 1</div>
+      <div class="stat-sub">Hypertrophy</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Today's Macros · ${dtype==='training'?'Training Day':'Rest Day'}</div>
+    ${bars}
+    <div class="macro-summary">
+      ${[
+        {label:'Kcal',v:totals.kcal,t:tgts.kcal,c:'var(--cyan)'},
+        {label:'Protein',v:totals.protein,t:tgts.protein,c:'var(--purple)'},
+        {label:'Carbs',v:totals.carbs,t:tgts.carbs,c:'var(--amber)'},
+        {label:'Fat',v:totals.fat,t:tgts.fat,c:'var(--green)'},
+      ].map(({label,v,t,c}) => `
+        <div class="macro-tile">
+          <div class="macro-tile-val ${v>t?'over':''}" style="${v<=t?`color:${c}`:''}">
+            ${v}
+          </div>
+          <div class="macro-tile-label">/${t} ${label}</div>
+        </div>`).join('')}
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Lift Progress to Off-Season Target</div>
+    ${liftBars}
+  </div>
+
+  <div class="card">
+    <div class="card-title">This Week</div>
+    <div class="week-strip">${weekStrip}</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Non-Negotiables Today</div>
+    ${DAILY_CHECKS.map(({key,label}) => {
+      const done = dl.checks?.[key];
+      return `<div class="check-item ${done?'done':''}" onclick="toggleCheck('${today()}','${key}')">
+        <span class="check-box">${done?'✅':'⬜'}</span>
+        <span class="check-label">${label}</span>
+      </div>`;
+    }).join('')}
+  </div>`;
+}
+
+// ─── MEALS ────────────────────────────────────────────────────────────────────
+
+let mealsDate = today();
+
+function renderMeals() {
+  const di     = dateDow(mealsDate);
+  const dtype  = getDayType(di);
+  const tgts   = TARGETS[dtype];
+  const dl     = dayLog(mealsDate);
+  const totals = sumMeals(dl.meals || []);
+
+  const foodOptions = Object.keys(FOODS).map(f =>
+    `<option value="${f}">${f}</option>`).join('');
+
+  const planMealRows = (PLAN_MEALS[dtype] || []).map((m,i) => `
+    <div class="plan-meal">
+      <div class="plan-meal-header">
+        <div>
+          <span class="plan-time">${m.time}</span>
+          <span class="plan-name"> · ${m.label}</span>
+        </div>
+        <button class="btn-add-all" onclick="addPlanMeal(${i},'${dtype}')">Add All</button>
+      </div>
+      <div class="plan-foods">${m.foods.join(', ')}</div>
+    </div>`).join('');
+
+  const mealLog = (dl.meals || []).length === 0
+    ? `<div class="empty">No meals logged yet</div>`
+    : `<div class="scroll-list">${(dl.meals||[]).map((m,i) => `
+      <div class="meal-item">
+        <div style="flex:1">
+          <div class="meal-food">${m.food}</div>
+          <div class="meal-meta">${m.time||''} · ${m.kcal}kcal · ${m.protein}P · ${m.carbs}C · ${m.fat}F${m.note?' · '+m.note:''}</div>
+        </div>
+        <button class="meal-del" onclick="removeMeal('${mealsDate}',${i})">×</button>
+      </div>`).join('')}</div>`;
+
+  const bars = [
+    {label:`Calories`,  v:totals.kcal,    t:tgts.kcal,    c:'#00d4ff'},
+    {label:`Protein`,   v:totals.protein,  t:tgts.protein,  c:'#9b6dff'},
+    {label:`Carbs`,     v:totals.carbs,    t:tgts.carbs,    c:'#ffb800'},
+    {label:`Fat`,       v:totals.fat,      t:tgts.fat,      c:'#00e87a'},
+  ].map(({label,v,t,c}) => {
+    const pct=Math.min((v/t)*100,100); const over=v>t;
+    return `<div class="macro-row">
+      <div class="macro-header">
+        <span class="macro-label">${label} (/${t})</span>
+        <span class="macro-val ${over?'over':''}">${v}</span>
+      </div>
+      <div class="macro-track"><div class="macro-fill" style="width:${pct}%;background:${over?'var(--red)':c}"></div></div>
+    </div>`;
+  }).join('');
+
+  return `
+  <div class="card">
+    <div class="card-title">Date & Session</div>
+    <div class="field">
+      <input type="date" id="meals-date" value="${mealsDate}" onchange="setMealsDate(this.value)">
+    </div>
+    <div style="display:flex;gap:8px;align-items:center;margin-bottom:10px">
+      <input type="number" id="meals-weight" placeholder="Body weight kg" step="0.1" value="${dl.weight||''}" style="flex:1">
+      <button class="btn btn-secondary" style="width:auto;padding:10px 16px" onclick="saveWeight()">Save</button>
+    </div>
+    <button class="btn ${dl.checks?.session?'btn-success':'btn-secondary'}" onclick="toggleCheck('${mealsDate}','session')">
+      ${dl.checks?.session ? '✅ Session Complete' : '⬜ Mark Session Done'}
+    </button>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Log Food</div>
+    <div class="field">
+      <label class="field-label">Food</label>
+      <select id="food-select">${foodOptions}</select>
+    </div>
+    <div class="grid2" style="margin-bottom:10px">
+      <div class="field" style="margin-bottom:0">
+        <label class="field-label">Qty (%/100g)</label>
+        <input type="number" id="food-qty" value="100" min="10" max="1000">
+      </div>
+      <div class="field" style="margin-bottom:0">
+        <label class="field-label">Preview</label>
+        <div style="background:var(--bg3);border:1px solid var(--border2);border-radius:8px;padding:10px 12px;font-size:13px;color:var(--muted)" id="food-preview">—</div>
+      </div>
+    </div>
+    <div class="field">
+      <label class="field-label">Note (optional)</label>
+      <input type="text" id="food-note" placeholder="e.g. pre-training">
+    </div>
+    <button class="btn btn-primary" onclick="addMeal()">+ Add to Log</button>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Totals vs Target · ${dtype==='training'?'Training Day':'Rest Day'}</div>
+    ${bars}
+  </div>
+
+  <div class="card">
+    <div class="card-title">Meal Log (${(dl.meals||[]).length} entries)</div>
+    ${mealLog}
+  </div>
+
+  <div class="card">
+    <div class="card-title">Plan Meals · ${dtype==='training'?'Training Day':'Rest Day'}</div>
+    ${planMealRows}
+  </div>`;
+}
+
+// ─── LIFTS ────────────────────────────────────────────────────────────────────
+
+function renderLifts() {
+  const liftOptions = ALL_LIFTS.map(l => `<option value="${l}">${l}</option>`).join('');
+
+  const goalBars = LIFT_GOALS.map(({name,start,target}) => {
+    const info  = state.lifts[name] || {};
+    const cur   = info.current || start;
+    const hist  = info.history || [];
+    const pct   = Math.min(Math.max(((cur-start)/(target-start))*100, 2), 100);
+    const recent = hist.slice(-4).reverse().map(h =>
+      `<div class="lift-entry">${h.date} · ${h.kg}kg × ${h.reps} reps${h.rpe?' @ RPE '+h.rpe:''}</div>`
+    ).join('');
+    return `<div style="margin-bottom:20px">
+      <div class="lift-header">
+        <span class="lift-name">${name}</span>
+        <div style="display:flex;gap:8px;align-items:center">
+          <span class="tag tag-blue">${start}kg start</span>
+          <span class="lift-val">${cur}kg</span>
+          <span class="tag tag-green">${target}kg goal</span>
+        </div>
+      </div>
+      <div class="lift-track" style="height:8px;margin:6px 0"><div class="lift-fill" style="width:${pct}%"></div></div>
+      <div class="lift-meta">${pct.toFixed(0)}% to target · ${hist.length} sessions logged</div>
+      ${recent ? `<div style="margin-top:8px">${recent}</div>` : ''}
+    </div>`;
+  }).join('');
+
+  return `
+  <div class="card">
+    <div class="card-title">Log a Lift</div>
+    <div class="field">
+      <label class="field-label">Lift</label>
+      <select id="lift-select">${liftOptions}</select>
+    </div>
+    <div class="grid3" style="margin-bottom:10px">
+      <div class="field" style="margin-bottom:0">
+        <label class="field-label">Weight (kg)</label>
+        <input type="number" id="lift-kg" placeholder="e.g. 120" step="2.5">
+      </div>
+      <div class="field" style="margin-bottom:0">
+        <label class="field-label">Reps</label>
+        <input type="number" id="lift-reps" placeholder="e.g. 5" min="1">
+      </div>
+      <div class="field" style="margin-bottom:0">
+        <label class="field-label">RPE</label>
+        <input type="number" id="lift-rpe" placeholder="e.g. 8" min="1" max="10" step="0.5">
+      </div>
+    </div>
+    <div class="field">
+      <label class="field-label">Date</label>
+      <input type="date" id="lift-date" value="${today()}">
+    </div>
+    <button class="btn btn-primary" onclick="logLift()">+ Log Lift</button>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Progress to Off-Season Targets</div>
+    ${goalBars}
+  </div>
+
+  <div class="card">
+    <div class="card-title">In-Season Week-by-Week Reference</div>
+    ${[
+      {week:1,squat:'4×5 ~155kg',dl:'4×5 ~175kg',bench:'4×5 ~97kg',note:'Feel form'},
+      {week:2,squat:'4×5 ~160kg',dl:'4×4 ~182kg',bench:'4×5 ~102kg',note:'+5kg all'},
+      {week:3,squat:'4×4 ~165kg',dl:'5×3 ~187kg',bench:'4×4 ~107kg',note:'Intensity peak'},
+      {week:4,squat:'3×5 deload', dl:'3×3 deload', bench:'3×5 deload', note:'DELOAD'},
+    ].map(r => `<div class="plan-meal">
+      <div style="font-size:12px;font-weight:700;color:var(--cyan);margin-bottom:4px">Week ${r.week} — ${r.note}</div>
+      <div style="font-size:11px;color:var(--muted)">Squat: ${r.squat} · DL: ${r.dl} · Bench: ${r.bench}</div>
+    </div>`).join('')}
+  </div>`;
+}
+
+// ─── WEIGHT ───────────────────────────────────────────────────────────────────
+
+function renderWeight() {
+  const entries = Object.entries(state.logs)
+    .filter(([,v]) => v.weight)
+    .sort(([a],[b]) => a.localeCompare(b))
+    .map(([date,v]) => ({date, weight:v.weight}));
+
+  const start  = 122;
+  const curW   = entries.length > 0 ? entries[entries.length-1].weight : start;
+  const totalC = entries.length > 0 ? (curW - start).toFixed(1) : '—';
+  const sign   = parseFloat(totalC) > 0 ? '+' : '';
+
+  const rows = entries.length === 0
+    ? `<div class="empty">No weight entries yet — log your weight in "Log Meals"</div>`
+    : entries.slice().reverse().map(({date,weight},i,arr) => {
+        const prev  = i < arr.length-1 ? arr[i+1].weight : start;
+        const diff  = (weight - prev).toFixed(1);
+        const good  = parseFloat(diff) >= -0.75 && parseFloat(diff) <= 0;
+        const color = parseFloat(diff) > 0 ? 'var(--red)' : good ? 'var(--green)' : 'var(--amber)';
+        return `<div class="weight-row">
+          <span class="weight-date">${date}</span>
+          <span class="weight-kg">${weight}<span style="font-size:12px;color:var(--muted)">kg</span></span>
+          <span class="weight-change" style="color:${color}">${parseFloat(diff)>0?'+':''}${diff}kg</span>
+        </div>`;
+      }).join('');
+
+  return `
+  <div class="grid3" style="margin-bottom:12px">
+    <div class="stat-tile">
+      <div class="stat-label">Start Weight</div>
+      <div class="stat-value" style="color:var(--muted)">${start}<span style="font-size:14px">kg</span></div>
+    </div>
+    <div class="stat-tile">
+      <div class="stat-label">Current</div>
+      <div class="stat-value" style="color:var(--cyan)">${curW}<span style="font-size:14px">kg</span></div>
+    </div>
+    <div class="stat-tile">
+      <div class="stat-label">Total Change</div>
+      <div class="stat-value" style="color:${parseFloat(totalC)>0?'var(--red)':'var(--green)'}">${sign}${totalC}<span style="font-size:14px">kg</span></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Weight Log</div>
+    <div class="scroll-list">${rows}</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Target Zones</div>
+    <div class="plan-meal">
+      <div style="font-size:12px;font-weight:700;color:var(--cyan);margin-bottom:4px">Block 1 — Weeks 1–5</div>
+      <div style="font-size:12px;color:var(--muted)">–0.5 to –0.75kg/week · Fat loss, protect muscle</div>
+    </div>
+    <div class="plan-meal">
+      <div style="font-size:12px;font-weight:700;color:var(--purple);margin-bottom:4px">Block 2 — Weeks 6–10</div>
+      <div style="font-size:12px;color:var(--muted)">–0.25 to –0.5kg/week · Strength peak, slower loss</div>
+    </div>
+    <div class="plan-meal">
+      <div style="font-size:12px;font-weight:700;color:var(--red);margin-bottom:4px">Red Flag</div>
+      <div style="font-size:12px;color:var(--muted)">Dropping &gt;1kg/week OR no change for 3+ weeks → adjust calories</div>
+    </div>
+    <div class="plan-meal">
+      <div style="font-size:12px;font-weight:700;color:var(--green);margin-bottom:4px">Green Light</div>
+      <div style="font-size:12px;color:var(--muted)">–0.25 to –0.75kg/week with stable or improving lifts</div>
+    </div>
+  </div>`;
+}
+
+// ─── CHECKLIST ────────────────────────────────────────────────────────────────
+
+let checkDate = today();
+
+function renderChecklist() {
+  const di    = dateDow(checkDate);
+  const info  = WEEKLY[di];
+  const dtype = getDayType(di);
+  const dl    = dayLog(checkDate);
+  const isTrain = dtype === 'training';
+  const isSun   = di === 6;
+
+  const makeChecks = (items, label, score) => `
+    <div class="card">
+      <div class="card-title">${label} · ${score}/${items.length}</div>
+      ${items.map(({key,lbl}) => {
+        const done = dl.checks?.[key];
+        return `<div class="check-item ${done?'done':''}" onclick="toggleCheck('${checkDate}','${key}')">
+          <span class="check-box">${done?'✅':'⬜'}</span>
+          <span class="check-label">${lbl}</span>
+        </div>`;
+      }).join('')}
+    </div>`;
+
+  const dailyScore   = DAILY_CHECKS.filter(({key}) => dl.checks?.[key]).length;
+  const trainScore   = TRAIN_CHECKS.filter(({key}) => dl.checks?.[key]).length;
+  const sundayScore  = SUNDAY_CHECKS.filter(({key}) => dl.checks?.[key]).length;
+
+  const map = (arr, keyFn) => arr.map(({key,label}) => ({key:keyFn?keyFn(key):key, lbl:label}));
+
+  return `
+  <div class="card">
+    <div class="card-title">Date</div>
+    <div style="display:flex;gap:8px;align-items:center">
+      <input type="date" value="${checkDate}" onchange="setCheckDate(this.value)" style="flex:1">
+      <span class="tag tag-blue">${info.session}</span>
+    </div>
+  </div>
+
+  ${makeChecks(DAILY_CHECKS.map(({key,label}) => ({key,lbl:label})), 'Daily Non-Negotiables', dailyScore)}
+  ${isTrain ? makeChecks(TRAIN_CHECKS.map(({key,label}) => ({key,lbl:label})), 'Training Day', trainScore) : ''}
+  ${isSun   ? makeChecks(SUNDAY_CHECKS.map(({key,label}) => ({key,lbl:label})), 'Sunday Batch Cook', sundayScore) : ''}`;
+}
+
+// ─── DATA ─────────────────────────────────────────────────────────────────────
+
+function renderData() {
+  const entryCount = Object.keys(state.logs).length;
+  const liftCount  = Object.values(state.lifts).reduce((a,l) => a + (l.history||[]).length, 0);
+
+  return `
+  <div class="card">
+    <div class="card-title">iCloud Backup</div>
+    <div style="font-size:13px;color:var(--muted);margin-bottom:14px;line-height:1.6">
+      Export your data as a JSON file, save it to iCloud Drive for safekeeping.
+      Import it any time to restore — on this phone or a new one.
+    </div>
+    <div style="font-size:12px;color:var(--dim);margin-bottom:14px">
+      ${entryCount} days logged · ${liftCount} lift entries
+    </div>
+    <div class="io-row">
+      <button class="btn btn-primary" onclick="exportData()">⬇ Export to iCloud</button>
+      <button class="btn btn-secondary" onclick="document.getElementById('import-file').click()">⬆ Import Backup</button>
+    </div>
+    <input type="file" id="import-file" accept=".json" style="display:none" onchange="importData(this)">
+  </div>
+
+  <div class="card">
+    <div class="card-title">Athlete Profile</div>
+    ${[
+      ['Position','Tighthead Prop'],
+      ['Age','21'],
+      ['Height','179cm'],
+      ['Starting Weight','122kg'],
+      ['Squat Max','170kg'],
+      ['Bench Max','110kg'],
+      ['Deadlift Max','180kg'],
+      ['Phase','Off-Season Block 1 — Hypertrophy'],
+      ['Start Date','11 May 2026'],
+    ].map(([k,v]) => `
+      <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:13px">
+        <span style="color:var(--muted)">${k}</span>
+        <span style="color:var(--text);font-weight:600">${v}</span>
+      </div>`).join('')}
+  </div>
+
+  <div class="card">
+    <div class="card-title">Supplement Schedule</div>
+    ${[
+      {time:'Breakfast',item:'Creatine 5g + Vitamin D3 with food'},
+      {time:'Pre-Bed',  item:'Casein 1 scoop + Magnesium glycinate 300–400mg'},
+      {time:'Training', item:'Electrolytes during or post-session'},
+      {time:'Post-Train',item:'Whey 2 scoops in smoothie immediately after'},
+    ].map(({time,item}) => `
+      <div class="plan-meal">
+        <span class="plan-time">${time}</span>
+        <div style="font-size:12px;color:var(--muted);margin-top:3px">${item}</div>
+      </div>`).join('')}
+  </div>
+
+  <div class="card">
+    <div class="card-title">Danger Zone</div>
+    <button class="btn btn-danger" onclick="confirmClear()">🗑 Clear All Data</button>
+  </div>`;
+}
+
+// ─── ACTIONS ──────────────────────────────────────────────────────────────────
+
+function toggleCheck(date, key) {
+  const dl = dayLog(date);
+  if (!dl.checks) dl.checks = {};
+  dl.checks[key] = !dl.checks[key];
+  save();
+  render();
+}
+
+function saveWeight() {
+  const w = parseFloat(document.getElementById('meals-weight')?.value);
+  if (!w || isNaN(w)) return;
+  const dl = dayLog(mealsDate);
+  dl.weight = w;
+  save();
+  render();
+}
+
+function setMealsDate(v) {
+  mealsDate = v;
+  render();
+}
+
+function setCheckDate(v) {
+  checkDate = v;
+  render();
+}
+
+function updateFoodPreview() {
+  const sel = document.getElementById('food-select');
+  const qty = parseFloat(document.getElementById('food-qty')?.value) || 100;
+  const el  = document.getElementById('food-preview');
+  if (!sel || !el) return;
+  const m = foodMacros(sel.value, qty);
+  el.textContent = `${m.kcal}kcal · ${m.protein}P · ${m.carbs}C · ${m.fat}F`;
+}
+
+function addMeal() {
+  const food  = document.getElementById('food-select')?.value;
+  const qty   = parseFloat(document.getElementById('food-qty')?.value) || 100;
+  const note  = document.getElementById('food-note')?.value || '';
+  if (!food) return;
+  const macros = foodMacros(food, qty);
+  const dl = dayLog(mealsDate);
+  dl.meals.push({
+    food, qty, note,
+    ...macros,
+    time: new Date().toLocaleTimeString('en-GB', {hour:'2-digit',minute:'2-digit'}),
+  });
+  save();
+  if (document.getElementById('food-note')) document.getElementById('food-note').value = '';
+  render();
+}
+
+function addPlanMeal(idx, dtype) {
+  const plan = PLAN_MEALS[dtype][idx];
+  const dl   = dayLog(mealsDate);
+  plan.foods.forEach(food => {
+    const macros = foodMacros(food);
+    dl.meals.push({
+      food, qty:100, note:'Plan',
+      ...macros,
+      time: plan.time,
+    });
+  });
+  save();
+  render();
+}
+
+function removeMeal(date, idx) {
+  const dl = dayLog(date);
+  dl.meals.splice(idx, 1);
+  save();
+  render();
+}
+
+function logLift() {
+  const name = document.getElementById('lift-select')?.value;
+  const kg   = parseFloat(document.getElementById('lift-kg')?.value);
+  const reps = parseInt(document.getElementById('lift-reps')?.value) || 0;
+  const rpe  = parseFloat(document.getElementById('lift-rpe')?.value) || 0;
+  const date = document.getElementById('lift-date')?.value || today();
+  if (!name || !kg || isNaN(kg)) return;
+
+  if (!state.lifts[name]) state.lifts[name] = {current: kg, history:[]};
+  state.lifts[name].history.push({date,kg,reps,rpe});
+  // Update current if new best
+  if (kg > (state.lifts[name].current || 0)) state.lifts[name].current = kg;
+
+  save();
+  if (document.getElementById('lift-kg'))   document.getElementById('lift-kg').value   = '';
+  if (document.getElementById('lift-reps')) document.getElementById('lift-reps').value = '';
+  if (document.getElementById('lift-rpe'))  document.getElementById('lift-rpe').value  = '';
+  render();
+}
+
+function exportData() {
+  const blob = new Blob([JSON.stringify(state, null, 2)], {type:'application/json'});
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  const date = today().replace(/-/g,'');
+  a.href = url;
+  a.download = `prop_tracker_backup_${date}.json`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+function importData(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const parsed = JSON.parse(e.target.result);
+      if (parsed.logs !== undefined || parsed.lifts !== undefined) {
+        state = {logs:{}, lifts:{}, ...parsed};
+        save();
+        render();
+        alert('Data imported successfully.');
+      } else {
+        alert('Invalid backup file.');
+      }
+    } catch { alert('Could not read file.'); }
+  };
+  reader.readAsText(file);
+}
+
+function confirmClear() {
+  if (confirm('Delete ALL data? This cannot be undone.')) {
+    state = {logs:{}, lifts:{}};
+    save();
+    render();
+  }
+}
+
+// ─── BIND EVENTS (called after each render) ───────────────────────────────────
+
+function bindEvents() {
+  const foodSel = document.getElementById('food-select');
+  const foodQty = document.getElementById('food-qty');
+  if (foodSel) {
+    foodSel.addEventListener('change', updateFoodPreview);
+    updateFoodPreview();
+  }
+  if (foodQty) foodQty.addEventListener('input', updateFoodPreview);
+}
+
+// ─── INIT ─────────────────────────────────────────────────────────────────────
+
+load();
+updateHeader();
+render();
+</script>
+</body>
+</html>
